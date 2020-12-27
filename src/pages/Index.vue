@@ -24,20 +24,18 @@ export default defineComponent({
   setup() {
     const todos: Ref<ReadonlyArray<Todo>> = ref([]);
 
-    const onSubmitNewTodo = (payload: { title: string }): void => {
-      TodosService.postTodo({ title: payload.title, completed: false });
+    const onSubmitNewTodo = ({ title }: { title: string }): void => {
+      TodosService.postTodo({ title, completed: false });
       todos.value = TodosService.getTodos();
     };
 
-    const onCompleteEdit = (payload: { editedTodo: Todo }) => {
-      const {
-        editedTodo: { id, title, completed }
-      } = payload;
+    const onCompleteEdit = ({ editedTodo }: { editedTodo: Todo }) => {
+      const { id, title, completed } = editedTodo;
       TodosService.putTodo({ id, title, completed });
       todos.value = TodosService.getTodos();
     };
-    const onClickRemove = (payload: { todo: Todo }) => {
-      TodosService.deleteTodo({ id: payload.todo.id });
+    const onClickRemove = ({ todo }: { todo: Todo }) => {
+      TodosService.deleteTodo({ id: todo.id });
       todos.value = TodosService.getTodos();
     };
 
