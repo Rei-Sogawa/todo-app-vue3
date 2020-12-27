@@ -8,22 +8,24 @@
   </svg>
 </template>
 
-<script>
-import { defineComponent, computed } from "vue";
-import { findIconDefinition } from "@fortawesome/fontawesome-svg-core";
+<script lang="ts">
+import { defineComponent, computed, PropType } from "vue";
+import {
+  findIconDefinition,
+  IconName
+} from "@fortawesome/fontawesome-svg-core";
 
 export default defineComponent({
   name: "FontAwesomeIcon",
 
   props: {
     icon: {
-      type: String,
+      type: String as PropType<IconName>,
       required: true
     },
     type: {
-      type: String,
-      default: "fas",
-      required: false
+      type: String as PropType<"fas" | "fal" | "far">,
+      default: "fas"
     },
     class: String
   },

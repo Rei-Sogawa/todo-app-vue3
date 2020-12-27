@@ -1,49 +1,49 @@
 <template>
   <div class="container" style="width: 480px;">
-    <CreateTodoForm class="my-3" @submit-new-todo="onSubmitNewTodo" />
+    <CreateTodoForm class="my-3" :create-todo="createTodo" />
     <TodoList
       :todos="todos"
-      @complete-edit="onCompleteEdit"
-      @click-remove="onClickRemove"
+      :update-todo="updateTodo"
+      :remove-todo="removeTodo"
     />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, Ref, ref, onBeforeMount } from "vue";
-import CreateTodoForm from "@/basics/CreateTodoForm.vue";
+import CreateTodoForm from "@/components/CreateTodoForm.vue";
 import TodoList from "@/components/TodoList.vue";
 import Todo from "@/models/todo";
 import * as TodosService from "@/storage/todos-service";
 
 export default defineComponent({
-  name: "Index",
-
   components: { CreateTodoForm, TodoList },
 
   setup() {
     const todos: Ref<ReadonlyArray<Todo>> = ref([]);
 
-    const onSubmitNewTodo = ({ title }: { title: string }): void => {
+    const fetchTodos = () => {
+      todos.value = TodosService.getTodos();
+    };
+    const createTodo = ({ title }: Pick<Todo, "title">): void => {
       TodosService.postTodo({ title, completed: false });
-      todos.value = TodosService.getTodos();
+      fetchTodos();
     };
-
-    const onCompleteEdit = ({ editedTodo }: { editedTodo: Todo }) => {
-      const { id, title, completed } = editedTodo;
+    const updateTodo = ({ todo }: { todo: Todo }): void => {
+      const { id, title, completed } = todo;
       TodosService.putTodo({ id, title, completed });
-      todos.value = TodosService.getTodos();
+      fetchTodos();
     };
-    const onClickRemove = ({ todo }: { todo: Todo }) => {
+    const removeTodo = ({ todo }: { todo: Todo }): void => {
       TodosService.deleteTodo({ id: todo.id });
-      todos.value = TodosService.getTodos();
+      fetchTodos();
     };
 
     onBeforeMount(() => {
-      todos.value = TodosService.getTodos();
+      fetchTodos();
     });
 
-    return { todos, onSubmitNewTodo, onCompleteEdit, onClickRemove };
+    return { todos, createTodo, updateTodo, removeTodo };
   }
 });
 </script>

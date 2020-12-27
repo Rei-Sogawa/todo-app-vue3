@@ -20,7 +20,7 @@ const postTodo = ({
     createdAt: Date.now(),
     updatedAt: Date.now()
   };
-  const todos: ReadonlyArray<Todo> = getTodos();
+  const todos = getTodos();
   localStorage.setItem(STORAGE_KEY, JSON.stringify([...todos, newTodo]));
 };
 
@@ -29,7 +29,7 @@ const putTodo = ({
   title,
   completed
 }: Pick<Todo, "id" | "title" | "completed">): void => {
-  const todos: ReadonlyArray<Todo> = getTodos();
+  const todos = getTodos();
   const editedTodo: Todo = Object.assign(
     {},
     todos.find(todo => todo.id === id),
@@ -42,7 +42,7 @@ const putTodo = ({
 };
 
 const deleteTodo = ({ id }: Pick<Todo, "id">): void => {
-  const todos: ReadonlyArray<Todo> = getTodos();
+  const todos = getTodos();
   localStorage.setItem(
     STORAGE_KEY,
     JSON.stringify(todos.filter(todo => todo.id !== id))

@@ -5,23 +5,27 @@
       class="form-control px-5 py-4"
       placeholder="Add new todo"
       v-model.trim="newTodoTitle"
+      required
     />
   </form>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref } from "vue";
+import { defineComponent, PropType, ref, Ref } from "vue";
+import Todo from "@/models/todo";
 
 export default defineComponent({
-  name: "CreateTodoForm",
+  props: {
+    createTodo: {
+      type: Function as PropType<({ title }: Pick<Todo, "title">) => void>,
+      required: true
+    }
+  },
 
-  setup(_, context) {
+  setup(props) {
     const newTodoTitle: Ref<string> = ref("");
     const onSubmit = (): void => {
-      if (!newTodoTitle.value) {
-        return;
-      }
-      context.emit("submit-new-todo", { title: newTodoTitle.value });
+      props.createTodo({ title: newTodoTitle.value });
       newTodoTitle.value = "";
     };
     return { newTodoTitle, onSubmit };

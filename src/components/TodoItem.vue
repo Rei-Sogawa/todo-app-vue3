@@ -3,6 +3,7 @@
     <input
       type="checkbox"
       class="mr-3"
+      required
       :checked="todo.completed"
       @change="onToggleChecked"
     />
@@ -32,30 +33,37 @@ import Todo from "@/models/todo";
 import { FontAwesomeIcon } from "@/plugins/font-awesome";
 
 export default defineComponent({
-  name: "TodoItem",
-
   components: { fa: FontAwesomeIcon },
 
   props: {
     todo: {
       type: Object as PropType<Todo>,
       required: true
+    },
+    updateTodo: {
+      type: Function as PropType<({ todo }: { todo: Todo }) => void>,
+      required: true
+    },
+    removeTodo: {
+      type: Function as PropType<({ todo }: { todo: Todo }) => void>,
+      required: true
+    },
+    setTodoIdBeingEdited: {
+      type: Function as PropType<(value: string | null) => void>,
+      required: true
     }
   },
 
-  setup(props, context) {
+  setup(props) {
     const onToggleChecked = () => {
-      context.emit("toggle-completed", {
-        todo: Object.assign({}, props.todo, {
-          completed: !props.todo.completed
-        })
-      });
+      const editedTodo = { ...props.todo, completed: !props.todo.completed };
+      props.updateTodo({ todo: editedTodo });
     };
     const onClickEdit = () => {
-      context.emit("click-edit", { todo: props.todo });
+      props.setTodoIdBeingEdited(props.todo.id);
     };
     const onClickRemove = () => {
-      context.emit("click-remove", { todo: props.todo });
+      props.removeTodo({ todo: props.todo });
     };
 
     return {

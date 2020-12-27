@@ -4,15 +4,15 @@
       <TodoItem
         v-if="!isTodoBeingEdited(todo)"
         :todo="todo"
-        @toggle-completed="onToggleCompleted"
-        @click-edit="onClickEdit"
-        @click-remove="onClickRemove"
+        :update-todo="updateTodo"
+        :remove-todo="removeTodo"
+        :set-todo-id-being-edited="setTodoIdBeingEdited"
       />
       <EditTodoForm
         v-else
         :todo="todo"
-        @complete-edit="onCompleteEdit"
-        @cancel-edit="onCancelEdit"
+        :update-todo="updateTodo"
+        :set-todo-id-being-edited="setTodoIdBeingEdited"
       />
     </div>
   </ul>
@@ -21,49 +21,36 @@
 <script lang="ts">
 import { defineComponent, PropType, Ref, ref } from "vue";
 import Todo from "@/models/todo";
-import TodoItem from "@/basics/TodoItem.vue";
-import EditTodoForm from "@/basics/EditTodoForm.vue";
+import TodoItem from "@/components/TodoItem.vue";
+import EditTodoForm from "@/components/EditTodoForm.vue";
 
 export default defineComponent({
-  name: "TodoList",
-
   components: { TodoItem, EditTodoForm },
 
   props: {
-    todos: { type: Array as PropType<Todo[]>, default: [] }
+    todos: { type: Array as PropType<Todo[]>, required: true },
+    updateTodo: {
+      type: Function as PropType<({ todo }: { todo: Todo }) => void>,
+      required: true
+    },
+    removeTodo: {
+      type: Function as PropType<({ todo }: { todo: Todo }) => void>,
+      required: true
+    }
   },
 
-  setup(_, context) {
+  setup() {
     const todoIdBeingEdited: Ref<string | null> = ref(null);
     const isTodoBeingEdited = (todo: Todo) =>
       todo.id === todoIdBeingEdited.value;
-
-    const onToggleCompleted = ({ todo }: { todo: Todo }) => {
-      context.emit("complete-edit", { editedTodo: todo });
-    };
-    const onClickEdit = ({ todo }: { todo: Todo }) => {
-      todoIdBeingEdited.value = todo.id;
-    };
-    const onClickRemove = ({ todo }: { todo: Todo }) => {
-      context.emit("click-remove", { todo });
-    };
-
-    const onCompleteEdit = ({ editedTodo }: { editedTodo: Todo }) => {
-      context.emit("complete-edit", { editedTodo });
-      todoIdBeingEdited.value = null;
-    };
-    const onCancelEdit = () => {
-      todoIdBeingEdited.value = null;
+    const setTodoIdBeingEdited = (value: string | null) => {
+      todoIdBeingEdited.value = value;
     };
 
     return {
       todoIdBeingEdited,
       isTodoBeingEdited,
-      onToggleCompleted,
-      onClickEdit,
-      onClickRemove,
-      onCompleteEdit,
-      onCancelEdit
+      setTodoIdBeingEdited
     };
   }
 });
