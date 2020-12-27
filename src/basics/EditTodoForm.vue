@@ -4,7 +4,7 @@
       ref="input"
       type="text"
       class="form-control px-5 py-4"
-      v-model="todoBeingEdited.title"
+      v-model.trim="todoBeingEdited.title"
       @blur="onBlur"
     />
   </form>
@@ -28,6 +28,9 @@ export default defineComponent({
     const todoBeingEdited: Todo = Object.assign({}, props.todo);
 
     const onSubmit = () => {
+      if (!todoBeingEdited.title) {
+        return;
+      }
       context.emit("complete-edit", { editedTodo: todoBeingEdited });
     };
     const onBlur = (): void => {

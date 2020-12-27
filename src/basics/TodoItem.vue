@@ -8,11 +8,19 @@
     />
     <span>{{ todo.title }}</span>
     <span class="float-right">
-      <button class="btn py-0 px-1 mr-1" @click="onClickEdit">
-        <fa icon="edit" class="edit-icon my-0"></fa>
+      <button
+        class="btn px-1 mr-1 position-relative"
+        style="bottom: 7px;"
+        @click="onClickEdit"
+      >
+        <fa icon="edit" class="edit-icon"></fa>
       </button>
-      <button class="btn py-0 px-1" @click="onClickRemove">
-        <fa icon="trash" class="trash-icon my-0"></fa>
+      <button
+        class="btn px-1 position-relative"
+        style="bottom: 7px;"
+        @click="onClickRemove"
+      >
+        <fa icon="trash" class="trash-icon"></fa>
       </button>
     </span>
   </li>
