@@ -1,29 +1,23 @@
 <template>
-  <li class="list-group-item cleafix">
-    <input
-      type="checkbox"
-      class="mr-3"
-      required
-      :checked="todo.completed"
-      @change="onToggleCompleted"
-    />
-    <span>{{ todo.title }}</span>
-    <span class="float-right">
-      <button
-        class="btn px-1 mr-1 position-relative"
-        style="bottom: 7px;"
-        @click="onClickEdit"
-      >
+  <li class="list-group-item d-flex justify-content-between">
+    <div>
+      <input
+        type="checkbox"
+        class="mr-3"
+        required
+        :checked="todo.completed"
+        @change="onToggleCompleted"
+      />
+      <span>{{ todo.title }}</span>
+    </div>
+    <div class="my-n2">
+      <button class="btn px-1 mr-1" @click="onClickEdit">
         <fa icon="edit" class="edit-icon"></fa>
       </button>
-      <button
-        class="btn px-1 position-relative"
-        style="bottom: 7px;"
-        @click="onClickRemove"
-      >
+      <button class="btn px-1" @click="onClickRemove">
         <fa icon="trash" class="trash-icon"></fa>
       </button>
-    </span>
+    </div>
   </li>
 </template>
 

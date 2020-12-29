@@ -12,14 +12,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref, Ref } from "vue";
-import Todo from "@/models/todo";
-
-export type HandleSubmitNewTodo = ({ title }: Pick<Todo, "title">) => void;
+import type { UseTodosReturn } from '@/composables/use-todos'
 
 export default defineComponent({
   props: {
-    handleSubmitNewTodo: {
-      type: Function as PropType<HandleSubmitNewTodo>,
+    createTodo: {
+      type: Function as PropType<UseTodosReturn["createTodo"]>,
       required: true
     }
   },
@@ -27,7 +25,7 @@ export default defineComponent({
   setup(props) {
     const newTodoTitle: Ref<string> = ref("");
     const onSubmit = (): void => {
-      props.handleSubmitNewTodo({ title: newTodoTitle.value });
+      props.createTodo({title: newTodoTitle.value, completed: false});
       newTodoTitle.value = "";
     };
     return { newTodoTitle, onSubmit };

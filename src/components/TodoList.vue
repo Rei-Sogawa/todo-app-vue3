@@ -19,34 +19,28 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, Ref, ref } from "vue";
+import { defineComponent, PropType, Ref, ref } from "vue";
 import Todo from "@/models/todo";
-import TodoItem, {
-  HandleClickEdit,
-  HandleClickRemove,
-  HandleToggleCompleted
-} from "@/components/TodoItem.vue";
-import EditTodoForm, {
-  HandleCancelEdit,
-  HandleSubmitEditedTodo
-} from "@/components/EditTodoForm.vue";
-import { UseTodos } from "@/composables/use-todos";
+import TodoItem from "@/components/TodoItem.vue"
+import type { HandleClickEdit, HandleClickRemove, HandleToggleCompleted } from "@/components/TodoItem.vue";
+import EditTodoForm from "@/components/EditTodoForm.vue";
+import type { HandleCancelEdit, HandleSubmitEditedTodo } from "@/components/EditTodoForm.vue";
+import type { UseTodosReturn } from "@/composables/use-todos";
 
 export default defineComponent({
   components: { TodoItem, EditTodoForm },
 
   props: {
-    todos: { type: Array as PropType<ReadonlyArray<Todo>>, required: true },
-    fetchTodos: {
-      type: Function as PropType<ReturnType<UseTodos>["fetchTodos"]>,
+    todos: {
+      type: Array as PropType<ReadonlyArray<Todo>>,
       required: true
     },
     updateTodo: {
-      type: Function as PropType<ReturnType<UseTodos>["updateTodo"]>,
+      type: Function as PropType<UseTodosReturn["updateTodo"]>,
       required: true
     },
     removeTodo: {
-      type: Function as PropType<ReturnType<UseTodos>["removeTodo"]>,
+      type: Function as PropType<UseTodosReturn["removeTodo"]>,
       required: true
     }
   },
@@ -62,7 +56,6 @@ export default defineComponent({
     const handleToggleCompleted: HandleToggleCompleted = todo => {
       const { id, title, completed } = todo;
       props.updateTodo({ id, title, completed: !completed });
-      props.fetchTodos();
     };
     const handleClickEdit: HandleClickEdit = todoId => {
       setTodoIdBeingEdited(todoId);
@@ -70,12 +63,10 @@ export default defineComponent({
     const handleClickRemove: HandleClickRemove = todo => {
       const { id } = todo;
       props.removeTodo({ id });
-      props.fetchTodos();
     };
     const handleSubmitEditedTodo: HandleSubmitEditedTodo = editedTodo => {
       const { id, title, completed } = editedTodo;
       props.updateTodo({ id, title, completed });
-      props.fetchTodos();
       setTodoIdBeingEdited(null);
     };
     const handleCancelEdit: HandleCancelEdit = () => {
