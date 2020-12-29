@@ -1,8 +1,12 @@
 <template>
   <div class="container" style="width: 480px;">
-    <CreateTodoForm class="my-3" :create-todo="createTodo" />
+    <CreateTodoForm
+      class="my-3"
+      :handle-submit-new-todo="handleSubmitNewTodo"
+    />
     <TodoList
       :todos="todos"
+      :fetch-todos="fetchTodos"
       :update-todo="updateTodo"
       :remove-todo="removeTodo"
     />
@@ -10,32 +14,27 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref, onBeforeMount } from "vue";
-import CreateTodoForm from "@/components/CreateTodoForm.vue";
+import { defineComponent, onBeforeMount } from "vue";
+import CreateTodoForm, {
+  HandleSubmitNewTodo
+} from "@/components/CreateTodoForm.vue";
 import TodoList from "@/components/TodoList.vue";
-import Todo from "@/models/todo";
-import * as TodosService from "@/storage/todos-service";
+import useTodos from "@/composables/use-todos";
 
 export default defineComponent({
   components: { CreateTodoForm, TodoList },
 
   setup() {
-    const todos: Ref<ReadonlyArray<Todo>> = ref([]);
+    const {
+      todos,
+      fetchTodos,
+      createTodo,
+      updateTodo,
+      removeTodo
+    } = useTodos();
 
-    const fetchTodos = () => {
-      todos.value = TodosService.getTodos();
-    };
-    const createTodo = ({ title }: Pick<Todo, "title">): void => {
-      TodosService.postTodo({ title, completed: false });
-      fetchTodos();
-    };
-    const updateTodo = ({ todo }: { todo: Todo }): void => {
-      const { id, title, completed } = todo;
-      TodosService.putTodo({ id, title, completed });
-      fetchTodos();
-    };
-    const removeTodo = ({ todo }: { todo: Todo }): void => {
-      TodosService.deleteTodo({ id: todo.id });
+    const handleSubmitNewTodo: HandleSubmitNewTodo = ({ title }) => {
+      createTodo({ title, completed: false });
       fetchTodos();
     };
 
@@ -43,7 +42,7 @@ export default defineComponent({
       fetchTodos();
     });
 
-    return { todos, createTodo, updateTodo, removeTodo };
+    return { todos, handleSubmitNewTodo, fetchTodos, updateTodo, removeTodo };
   }
 });
 </script>

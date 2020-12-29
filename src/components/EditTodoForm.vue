@@ -15,18 +15,21 @@
 import { defineComponent, onMounted, PropType, Ref, ref } from "vue";
 import Todo from "@/models/todo";
 
+export type HandleCancelEdit = () => void;
+export type HandleSubmitEditedTodo = (editedTodo: Todo) => void;
+
 export default defineComponent({
   props: {
     todo: {
       type: Object as PropType<Todo>,
       required: true
     },
-    updateTodo: {
-      type: Function as PropType<({ todo }: { todo: Todo }) => void>,
+    handleSubmitEditedTodo: {
+      type: Function as PropType<HandleSubmitEditedTodo>,
       required: true
     },
-    setTodoIdBeingEdited: {
-      type: Function as PropType<(value: string | null) => void>,
+    handleCancelEdit: {
+      type: Function as PropType<HandleCancelEdit>,
       required: true
     }
   },
@@ -35,11 +38,10 @@ export default defineComponent({
     const todoBeingEdited: Todo = { ...props.todo };
 
     const onSubmit = () => {
-      props.updateTodo({ todo: todoBeingEdited });
-      props.setTodoIdBeingEdited(null);
+      props.handleSubmitEditedTodo(todoBeingEdited);
     };
     const onBlur = (): void => {
-      props.setTodoIdBeingEdited(null);
+      props.handleCancelEdit();
     };
 
     const input: Ref<HTMLInputElement | null> = ref(null);

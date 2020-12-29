@@ -5,7 +5,7 @@
       class="mr-3"
       required
       :checked="todo.completed"
-      @change="onToggleChecked"
+      @change="onToggleCompleted"
     />
     <span>{{ todo.title }}</span>
     <span class="float-right">
@@ -32,6 +32,10 @@ import { defineComponent, PropType } from "vue";
 import Todo from "@/models/todo";
 import { FontAwesomeIcon } from "@/plugins/font-awesome";
 
+export type HandleToggleCompleted = (todo: Todo) => void;
+export type HandleClickEdit = (todoId: string) => void;
+export type HandleClickRemove = (todo: Todo) => void;
+
 export default defineComponent({
   components: { fa: FontAwesomeIcon },
 
@@ -40,34 +44,33 @@ export default defineComponent({
       type: Object as PropType<Todo>,
       required: true
     },
-    updateTodo: {
-      type: Function as PropType<({ todo }: { todo: Todo }) => void>,
+    handleToggleCompleted: {
+      type: Function as PropType<HandleToggleCompleted>,
       required: true
     },
-    removeTodo: {
-      type: Function as PropType<({ todo }: { todo: Todo }) => void>,
+    handleClickEdit: {
+      type: Function as PropType<HandleClickEdit>,
       required: true
     },
-    setTodoIdBeingEdited: {
-      type: Function as PropType<(value: string | null) => void>,
+    handleClickRemove: {
+      type: Function as PropType<HandleClickRemove>,
       required: true
     }
   },
 
   setup(props) {
-    const onToggleChecked = () => {
-      const editedTodo = { ...props.todo, completed: !props.todo.completed };
-      props.updateTodo({ todo: editedTodo });
+    const onToggleCompleted = () => {
+      props.handleToggleCompleted(props.todo);
     };
     const onClickEdit = () => {
-      props.setTodoIdBeingEdited(props.todo.id);
+      props.handleClickEdit(props.todo.id);
     };
     const onClickRemove = () => {
-      props.removeTodo({ todo: props.todo });
+      props.handleClickRemove(props.todo);
     };
 
     return {
-      onToggleChecked,
+      onToggleCompleted,
       onClickEdit,
       onClickRemove
     };

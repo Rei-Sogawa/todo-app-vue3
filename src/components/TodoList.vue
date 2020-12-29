@@ -4,42 +4,54 @@
       <TodoItem
         v-if="!isTodoBeingEdited(todo)"
         :todo="todo"
-        :update-todo="updateTodo"
-        :remove-todo="removeTodo"
-        :set-todo-id-being-edited="setTodoIdBeingEdited"
+        :handle-toggle-completed="handleToggleCompleted"
+        :handle-click-edit="handleClickEdit"
+        :handle-click-remove="handleClickRemove"
       />
       <EditTodoForm
         v-else
         :todo="todo"
-        :update-todo="updateTodo"
-        :set-todo-id-being-edited="setTodoIdBeingEdited"
+        :handle-submit-edited-todo="handleSubmitEditedTodo"
+        :handle-cancel-edit="handleCancelEdit"
       />
     </div>
   </ul>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, Ref, ref } from "vue";
+import { computed, defineComponent, PropType, Ref, ref } from "vue";
 import Todo from "@/models/todo";
-import TodoItem from "@/components/TodoItem.vue";
-import EditTodoForm from "@/components/EditTodoForm.vue";
+import TodoItem, {
+  HandleClickEdit,
+  HandleClickRemove,
+  HandleToggleCompleted
+} from "@/components/TodoItem.vue";
+import EditTodoForm, {
+  HandleCancelEdit,
+  HandleSubmitEditedTodo
+} from "@/components/EditTodoForm.vue";
+import { UseTodos } from "@/composables/use-todos";
 
 export default defineComponent({
   components: { TodoItem, EditTodoForm },
 
   props: {
-    todos: { type: Array as PropType<Todo[]>, required: true },
+    todos: { type: Array as PropType<ReadonlyArray<Todo>>, required: true },
+    fetchTodos: {
+      type: Function as PropType<ReturnType<UseTodos>["fetchTodos"]>,
+      required: true
+    },
     updateTodo: {
-      type: Function as PropType<({ todo }: { todo: Todo }) => void>,
+      type: Function as PropType<ReturnType<UseTodos>["updateTodo"]>,
       required: true
     },
     removeTodo: {
-      type: Function as PropType<({ todo }: { todo: Todo }) => void>,
+      type: Function as PropType<ReturnType<UseTodos>["removeTodo"]>,
       required: true
     }
   },
 
-  setup() {
+  setup(props) {
     const todoIdBeingEdited: Ref<string | null> = ref(null);
     const isTodoBeingEdited = (todo: Todo) =>
       todo.id === todoIdBeingEdited.value;
@@ -47,10 +59,37 @@ export default defineComponent({
       todoIdBeingEdited.value = value;
     };
 
+    const handleToggleCompleted: HandleToggleCompleted = todo => {
+      const { id, title, completed } = todo;
+      props.updateTodo({ id, title, completed: !completed });
+      props.fetchTodos();
+    };
+    const handleClickEdit: HandleClickEdit = todoId => {
+      setTodoIdBeingEdited(todoId);
+    };
+    const handleClickRemove: HandleClickRemove = todo => {
+      const { id } = todo;
+      props.removeTodo({ id });
+      props.fetchTodos();
+    };
+    const handleSubmitEditedTodo: HandleSubmitEditedTodo = editedTodo => {
+      const { id, title, completed } = editedTodo;
+      props.updateTodo({ id, title, completed });
+      props.fetchTodos();
+      setTodoIdBeingEdited(null);
+    };
+    const handleCancelEdit: HandleCancelEdit = () => {
+      setTodoIdBeingEdited(null);
+    };
+
     return {
       todoIdBeingEdited,
       isTodoBeingEdited,
-      setTodoIdBeingEdited
+      handleToggleCompleted,
+      handleClickEdit,
+      handleClickRemove,
+      handleSubmitEditedTodo,
+      handleCancelEdit
     };
   }
 });

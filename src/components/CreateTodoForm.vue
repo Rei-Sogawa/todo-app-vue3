@@ -14,10 +14,12 @@
 import { defineComponent, PropType, ref, Ref } from "vue";
 import Todo from "@/models/todo";
 
+export type HandleSubmitNewTodo = ({ title }: Pick<Todo, "title">) => void;
+
 export default defineComponent({
   props: {
-    createTodo: {
-      type: Function as PropType<({ title }: Pick<Todo, "title">) => void>,
+    handleSubmitNewTodo: {
+      type: Function as PropType<HandleSubmitNewTodo>,
       required: true
     }
   },
@@ -25,7 +27,7 @@ export default defineComponent({
   setup(props) {
     const newTodoTitle: Ref<string> = ref("");
     const onSubmit = (): void => {
-      props.createTodo({ title: newTodoTitle.value });
+      props.handleSubmitNewTodo({ title: newTodoTitle.value });
       newTodoTitle.value = "";
     };
     return { newTodoTitle, onSubmit };
