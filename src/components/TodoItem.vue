@@ -25,7 +25,10 @@
 import { defineComponent, PropType } from "vue";
 import { FontAwesomeIcon } from "@/plugins/font-awesome";
 import Todo from "@/models/todo";
-import type { HandleClickEdit, HandleClickRemove, HandleToggleCompleted } from "@/pages/Index.vue";
+
+export type HandleToggleCompleted = (todo: Todo) => void;
+export type HandleClickEdit = (todo: Todo) => void;
+export type HandleClickRemove = (todo: Todo) => void;
 
 export default defineComponent({
   components: { fa: FontAwesomeIcon },
@@ -47,7 +50,7 @@ export default defineComponent({
       type: Function as PropType<HandleClickRemove>,
       required: true
     }
-  },
+  }
 });
 </script>
 

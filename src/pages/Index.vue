@@ -21,15 +21,17 @@ import { defineComponent, Ref, ref } from "vue";
 import CreateTodoForm from "@/components/CreateTodoForm.vue";
 import TodoList from "@/components/TodoList.vue";
 import useTodos from "@/composables/use-todos";
-import Todo from "@/models/todo";
 
-import { HandleSubmitNewTodo } from "@/components/CreateTodoForm.vue";
-
-export type HandleToggleCompleted = (todo: Todo) => void;
-export type HandleClickEdit = (todo: Todo) => void;
-export type HandleClickRemove = (todo: Todo) => void;
-export type HandleCancelEdit = () => void;
-export type HandleSubmitEditedTodo = (editedTodo: Todo) => void;
+import type { HandleSubmitNewTodo } from "@/components/CreateTodoForm.vue";
+import type {
+  HandleToggleCompleted,
+  HandleClickEdit,
+  HandleClickRemove,
+} from "@/components/TodoItem.vue";
+import type {
+  HandleCancelEdit,
+  HandleSubmitEditedTodo,
+} from "@/components/EditTodoForm.vue";
 
 export default defineComponent({
   components: { CreateTodoForm, TodoList },
@@ -37,24 +39,24 @@ export default defineComponent({
   setup() {
     const { todos, createTodo, updateTodo, removeTodo } = useTodos();
 
-    const handleSubmitNewTodo: HandleSubmitNewTodo = title => {
+    const handleSubmitNewTodo: HandleSubmitNewTodo = (title) => {
       createTodo({ title: title.value, completed: false });
       title.value = "";
     };
 
     const todoIdBeingEdited: Ref<string | null> = ref(null);
-    const handleToggleCompleted: HandleToggleCompleted = todo => {
+    const handleToggleCompleted: HandleToggleCompleted = (todo) => {
       const { id, title, completed } = todo;
       updateTodo({ id, title, completed: !completed });
     };
-    const handleClickEdit: HandleClickEdit = todo => {
+    const handleClickEdit: HandleClickEdit = (todo) => {
       todoIdBeingEdited.value = todo.id;
     };
-    const handleClickRemove: HandleClickRemove = todo => {
+    const handleClickRemove: HandleClickRemove = (todo) => {
       const { id } = todo;
       removeTodo({ id });
     };
-    const handleSubmitEditedTodo: HandleSubmitEditedTodo = editedTodo => {
+    const handleSubmitEditedTodo: HandleSubmitEditedTodo = (editedTodo) => {
       const { id, title, completed } = editedTodo;
       updateTodo({ id, title, completed });
       todoIdBeingEdited.value = null;
@@ -72,8 +74,8 @@ export default defineComponent({
       handleClickEdit,
       handleClickRemove,
       handleSubmitEditedTodo,
-      handleCancelEdit
+      handleCancelEdit,
     };
-  }
+  },
 });
 </script>

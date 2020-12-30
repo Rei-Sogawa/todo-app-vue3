@@ -24,6 +24,16 @@ import Todo from "@/models/todo";
 import TodoItem from "@/components/TodoItem.vue";
 import EditTodoForm from "@/components/EditTodoForm.vue";
 
+import type {
+  HandleToggleCompleted,
+  HandleClickEdit,
+  HandleClickRemove,
+} from "@/components/TodoItem.vue";
+import type {
+  HandleCancelEdit,
+  HandleSubmitEditedTodo,
+} from "@/components/EditTodoForm.vue";
+
 export default defineComponent({
   components: { TodoItem, EditTodoForm },
 
@@ -33,29 +43,27 @@ export default defineComponent({
       required: true
     },
     todoIdBeingEdited: {
-      // nullable のため required は false
       type: String as PropType<string | null>,
-      required: false
+      default: undefined
     },
-    // 以下の props は子に渡すだけなので、PropType をわざわざ書く必要はない？
     handleToggleCompleted: {
-      type: Function,
+      type: Function as PropType<HandleToggleCompleted>,
       required: true
     },
     handleClickEdit: {
-      type: Function,
+      type: Function as PropType<HandleClickEdit>,
       required: true
     },
     handleClickRemove: {
-      type: Function,
+      type: Function as PropType<HandleClickRemove>,
       required: true
     },
     handleSubmitEditedTodo: {
-      type: Function,
+      type: Function as PropType<HandleSubmitEditedTodo>,
       required: true
     },
     handleCancelEdit: {
-      type: Function,
+      type: Function as PropType<HandleCancelEdit>,
       required: true
     }
   },

@@ -14,10 +14,9 @@
 <script lang="ts">
 import { defineComponent, PropType, Ref, ref, onMounted } from "vue";
 import type Todo from "@/models/todo";
-import type {
-  HandleCancelEdit,
-  HandleSubmitEditedTodo,
-} from "@/pages/Index.vue";
+
+export type HandleCancelEdit = () => void;
+export type HandleSubmitEditedTodo = (editedTodo: Todo) => void;
 
 export default defineComponent({
   props: {
