@@ -5,14 +5,13 @@
       placeholder="Add new todo"
       required
       class="form-control px-5 py-4"
-      :value="newTodoTitle"
-      @input="$emit('update:newTodoTitle', $event.target.value)"
+      v-model.trim="title"
     />
   </form>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import type { HandleSubmitNewTodo } from "@/pages/Index.vue";
 
 export default defineComponent({
@@ -28,5 +27,15 @@ export default defineComponent({
   },
 
   emits: ["update:newTodoTitle"],
+
+  setup(props, context) {
+    const title = computed({
+      get: () => props.newTodoTitle,
+      set: (newVal) => {
+        context.emit("update:newTodoTitle", newVal);
+      },
+    });
+    return { title };
+  },
 });
 </script>
