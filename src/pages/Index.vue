@@ -2,7 +2,6 @@
   <div class="container" style="width: 480px">
     <CreateTodoForm
       class="my-3"
-      v-model:new-todo-title="newTodoTitle"
       :handle-submit-new-todo="handleSubmitNewTodo"
     />
     <TodoList
@@ -24,7 +23,8 @@ import TodoList from "@/components/TodoList.vue";
 import useTodos from "@/composables/use-todos";
 import Todo from "@/models/todo";
 
-export type HandleSubmitNewTodo = () => void;
+import { HandleSubmitNewTodo } from "@/components/CreateTodoForm.vue";
+
 export type HandleToggleCompleted = (todo: Todo) => void;
 export type HandleClickEdit = (todo: Todo) => void;
 export type HandleClickRemove = (todo: Todo) => void;
@@ -37,10 +37,9 @@ export default defineComponent({
   setup() {
     const { todos, createTodo, updateTodo, removeTodo } = useTodos();
 
-    const newTodoTitle: Ref<string> = ref("");
-    const handleSubmitNewTodo: HandleSubmitNewTodo = () => {
-      createTodo({ title: newTodoTitle.value, completed: false });
-      newTodoTitle.value = "";
+    const handleSubmitNewTodo: HandleSubmitNewTodo = title => {
+      createTodo({ title: title.value, completed: false });
+      title.value = "";
     };
 
     const todoIdBeingEdited: Ref<string | null> = ref(null);
@@ -65,7 +64,6 @@ export default defineComponent({
     };
 
     return {
-      newTodoTitle,
       handleSubmitNewTodo,
 
       todos,
