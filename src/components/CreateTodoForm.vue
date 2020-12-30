@@ -1,34 +1,32 @@
 <template>
-  <form @submit.prevent="onSubmit">
+  <form @submit.prevent="handleSubmitNewTodo">
     <input
       type="text"
-      class="form-control px-5 py-4"
       placeholder="Add new todo"
-      v-model.trim="newTodoTitle"
       required
+      class="form-control px-5 py-4"
+      :value="newTodoTitle"
+      @input="$emit('update:newTodoTitle', $event.target.value)"
     />
   </form>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, Ref } from "vue";
-import type { UseTodosReturn } from '@/composables/use-todos'
+import { defineComponent, PropType } from "vue";
+import type { HandleSubmitNewTodo } from "@/pages/Index.vue";
 
 export default defineComponent({
   props: {
-    createTodo: {
-      type: Function as PropType<UseTodosReturn["createTodo"]>,
-      required: true
-    }
+    newTodoTitle: {
+      type: String,
+      required: true,
+    },
+    handleSubmitNewTodo: {
+      type: Function as PropType<HandleSubmitNewTodo>,
+      required: true,
+    },
   },
 
-  setup(props) {
-    const newTodoTitle: Ref<string> = ref("");
-    const onSubmit = (): void => {
-      props.createTodo({title: newTodoTitle.value, completed: false});
-      newTodoTitle.value = "";
-    };
-    return { newTodoTitle, onSubmit };
-  }
+  emits: ["update:newTodoTitle"],
 });
 </script>

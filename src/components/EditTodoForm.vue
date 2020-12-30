@@ -1,55 +1,43 @@
 <template>
-  <form @submit.prevent="onSubmit">
+  <form @submit.prevent="handleSubmitEditedTodo(todoBeingEdited)">
     <input
-      ref="input"
       type="text"
       class="form-control px-5 py-4"
       v-model.trim="todoBeingEdited.title"
-      @blur="onBlur"
+      @blur="handleCancelEdit"
       required
+      autofocus
     />
   </form>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, Ref, ref } from "vue";
-import Todo from "@/models/todo";
-
-export type HandleCancelEdit = () => void;
-export type HandleSubmitEditedTodo = (editedTodo: Todo) => void;
+import { defineComponent, PropType } from "vue";
+import type Todo from "@/models/todo";
+import type {
+  HandleCancelEdit,
+  HandleSubmitEditedTodo,
+} from "@/pages/Index.vue";
 
 export default defineComponent({
   props: {
     todo: {
       type: Object as PropType<Todo>,
-      required: true
+      required: true,
     },
     handleSubmitEditedTodo: {
       type: Function as PropType<HandleSubmitEditedTodo>,
-      required: true
+      required: true,
     },
     handleCancelEdit: {
       type: Function as PropType<HandleCancelEdit>,
-      required: true
-    }
+      required: true,
+    },
   },
 
   setup(props) {
     const todoBeingEdited: Todo = { ...props.todo };
-
-    const onSubmit = () => {
-      props.handleSubmitEditedTodo(todoBeingEdited);
-    };
-    const onBlur = (): void => {
-      props.handleCancelEdit();
-    };
-
-    const input: Ref<HTMLInputElement | null> = ref(null);
-    onMounted(() => {
-      input.value?.focus();
-    });
-
-    return { todoBeingEdited, onSubmit, onBlur, input };
-  }
+    return { todoBeingEdited };
+  },
 });
 </script>

@@ -19,13 +19,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, Ref, ref } from "vue";
+import { defineComponent, PropType } from "vue";
 import Todo from "@/models/todo";
-import TodoItem from "@/components/TodoItem.vue"
-import type { HandleClickEdit, HandleClickRemove, HandleToggleCompleted } from "@/components/TodoItem.vue";
+import TodoItem from "@/components/TodoItem.vue";
 import EditTodoForm from "@/components/EditTodoForm.vue";
-import type { HandleCancelEdit, HandleSubmitEditedTodo } from "@/components/EditTodoForm.vue";
-import type { UseTodosReturn } from "@/composables/use-todos";
 
 export default defineComponent({
   components: { TodoItem, EditTodoForm },
@@ -35,53 +32,38 @@ export default defineComponent({
       type: Array as PropType<ReadonlyArray<Todo>>,
       required: true
     },
-    updateTodo: {
-      type: Function as PropType<UseTodosReturn["updateTodo"]>,
+    todoIdBeingEdited: {
+      // nullable のため required は false
+      type: String as PropType<string | null>,
+      required: false
+    },
+    // 以下の props は子に渡すだけなので、PropType をわざわざ書く必要はない？
+    handleToggleCompleted: {
+      type: Function,
       required: true
     },
-    removeTodo: {
-      type: Function as PropType<UseTodosReturn["removeTodo"]>,
+    handleClickEdit: {
+      type: Function,
+      required: true
+    },
+    handleClickRemove: {
+      type: Function,
+      required: true
+    },
+    handleSubmitEditedTodo: {
+      type: Function,
+      required: true
+    },
+    handleCancelEdit: {
+      type: Function,
       required: true
     }
   },
 
   setup(props) {
-    const todoIdBeingEdited: Ref<string | null> = ref(null);
     const isTodoBeingEdited = (todo: Todo) =>
-      todo.id === todoIdBeingEdited.value;
-    const setTodoIdBeingEdited = (value: string | null) => {
-      todoIdBeingEdited.value = value;
-    };
-
-    const handleToggleCompleted: HandleToggleCompleted = todo => {
-      const { id, title, completed } = todo;
-      props.updateTodo({ id, title, completed: !completed });
-    };
-    const handleClickEdit: HandleClickEdit = todoId => {
-      setTodoIdBeingEdited(todoId);
-    };
-    const handleClickRemove: HandleClickRemove = todo => {
-      const { id } = todo;
-      props.removeTodo({ id });
-    };
-    const handleSubmitEditedTodo: HandleSubmitEditedTodo = editedTodo => {
-      const { id, title, completed } = editedTodo;
-      props.updateTodo({ id, title, completed });
-      setTodoIdBeingEdited(null);
-    };
-    const handleCancelEdit: HandleCancelEdit = () => {
-      setTodoIdBeingEdited(null);
-    };
-
-    return {
-      todoIdBeingEdited,
-      isTodoBeingEdited,
-      handleToggleCompleted,
-      handleClickEdit,
-      handleClickRemove,
-      handleSubmitEditedTodo,
-      handleCancelEdit
-    };
+      todo.id === props.todoIdBeingEdited;
+    return { isTodoBeingEdited };
   }
 });
 </script>

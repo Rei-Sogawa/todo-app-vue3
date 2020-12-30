@@ -2,36 +2,40 @@ import Todo from "@/models/todo";
 import { ref, Ref } from "vue";
 import * as TodosService from "@/storage/todos-service";
 
+type Todos = Ref<ReadonlyArray<Todo>>;
+type CreateTodo = ({
+  title,
+  completed
+}: Pick<Todo, "title" | "completed">) => void;
+type UpdateTodo = ({
+  id,
+  title,
+  completed
+}: Pick<Todo, "id" | "title" | "completed">) => void;
+type RemoveTodo = ({ id }: Pick<Todo, "id">) => void;
+
 export type UseTodosReturn = {
-  todos: Ref<ReadonlyArray<Todo>>;
-  createTodo: ({ title, completed }: Pick<Todo, "title" | "completed">) => void;
-  updateTodo: ({
-    id,
-    title,
-    completed
-  }: Pick<Todo, "id" | "title" | "completed">) => void;
-  removeTodo: ({ id }: Pick<Todo, "id">) => void;
+  todos: Todos;
+  createTodo: CreateTodo;
+  updateTodo: UpdateTodo;
+  removeTodo: RemoveTodo;
 };
 
 export default function useTodos(): UseTodosReturn {
-  const todos: UseTodosReturn["todos"] = ref([]);
+  const todos: Todos = ref([]);
 
   const fetchTodos: () => void = () => {
     todos.value = TodosService.getTodos();
   };
-  const createTodo: UseTodosReturn["createTodo"] = ({ title, completed }) => {
+  const createTodo: CreateTodo = ({ title, completed }) => {
     TodosService.postTodo({ title, completed });
     fetchTodos();
   };
-  const updateTodo: UseTodosReturn["updateTodo"] = ({
-    id,
-    title,
-    completed
-  }) => {
+  const updateTodo: UpdateTodo = ({ id, title, completed }) => {
     TodosService.putTodo({ id, title, completed });
     fetchTodos();
   };
-  const removeTodo: UseTodosReturn["removeTodo"] = ({ id }) => {
+  const removeTodo: RemoveTodo = ({ id }) => {
     TodosService.deleteTodo({ id });
     fetchTodos();
   };
