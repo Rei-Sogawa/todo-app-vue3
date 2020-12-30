@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleSubmitNewTodo">
+  <form @submit.prevent="onSubmit">
     <input
       type="text"
       placeholder="Add new todo"
@@ -11,31 +11,24 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
-import type { HandleSubmitNewTodo } from "@/pages/Index.vue";
+import { defineComponent, PropType, Ref, ref } from "vue";
+
+export type HandleSubmitNewTodo = (title: Ref<string>) => void;
 
 export default defineComponent({
   props: {
-    newTodoTitle: {
-      type: String,
-      required: true,
-    },
     handleSubmitNewTodo: {
       type: Function as PropType<HandleSubmitNewTodo>,
-      required: true,
-    },
+      required: true
+    }
   },
 
-  emits: ["update:newTodoTitle"],
-
-  setup(props, context) {
-    const title = computed({
-      get: () => props.newTodoTitle,
-      set: (newVal) => {
-        context.emit("update:newTodoTitle", newVal);
-      },
-    });
-    return { title };
-  },
+  setup(props) {
+    const title: Ref<string> = ref("");
+    const onSubmit = () => {
+      props.handleSubmitNewTodo(title);
+    };
+    return { title, onSubmit };
+  }
 });
 </script>
