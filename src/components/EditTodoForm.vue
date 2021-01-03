@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleSubmitEditedTodo(todoBeingEdited)">
+  <form @submit.prevent="handleSubmitEditedTodoAndReset(todoBeingEdited)">
     <input
       ref="input"
       type="text"
@@ -16,7 +16,7 @@ import { defineComponent, PropType, Ref, ref, onMounted } from "vue";
 import type Todo from "@/models/todo";
 
 export type HandleCancelEdit = () => void;
-export type HandleSubmitEditedTodo = (editedTodo: Todo) => void;
+export type HandleSubmitEditedTodoAndReset = (editedTodo: Todo) => void;
 
 export default defineComponent({
   props: {
@@ -24,8 +24,8 @@ export default defineComponent({
       type: Object as PropType<Todo>,
       required: true,
     },
-    handleSubmitEditedTodo: {
-      type: Function as PropType<HandleSubmitEditedTodo>,
+    handleSubmitEditedTodoAndReset: {
+      type: Function as PropType<HandleSubmitEditedTodoAndReset>,
       required: true,
     },
     handleCancelEdit: {

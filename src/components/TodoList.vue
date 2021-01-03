@@ -11,7 +11,7 @@
       <EditTodoForm
         v-else
         :todo="todo"
-        :handle-submit-edited-todo="handleSubmitEditedTodo"
+        :handle-submit-edited-todo-and-reset="handleSubmitEditedTodoAndReset"
         :handle-cancel-edit="handleCancelEdit"
       />
     </div>
@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { defineComponent, PropType, reactive } from "vue";
 import Todo from "@/models/todo";
 import TodoItem from "@/components/TodoItem.vue";
 import EditTodoForm from "@/components/EditTodoForm.vue";
@@ -30,9 +30,15 @@ import type {
   HandleClickRemove,
 } from "@/components/TodoItem.vue";
 import type {
+  HandleSubmitEditedTodoAndReset,
   HandleCancelEdit,
-  HandleSubmitEditedTodo,
 } from "@/components/EditTodoForm.vue";
+
+export type HandleSubmitEditedTodo = (editedTodo: Todo) => void;
+
+type State = {
+  todoIdBeingEdited: string | null;
+};
 
 export default defineComponent({
   components: { TodoItem, EditTodoForm },
@@ -40,38 +46,48 @@ export default defineComponent({
   props: {
     todos: {
       type: Array as PropType<ReadonlyArray<Todo>>,
-      required: true
-    },
-    todoIdBeingEdited: {
-      type: String as PropType<string | null>,
-      default: undefined
+      required: true,
     },
     handleToggleCompleted: {
       type: Function as PropType<HandleToggleCompleted>,
-      required: true
-    },
-    handleClickEdit: {
-      type: Function as PropType<HandleClickEdit>,
-      required: true
+      required: true,
     },
     handleClickRemove: {
       type: Function as PropType<HandleClickRemove>,
-      required: true
+      required: true,
     },
     handleSubmitEditedTodo: {
       type: Function as PropType<HandleSubmitEditedTodo>,
-      required: true
+      required: true,
     },
-    handleCancelEdit: {
-      type: Function as PropType<HandleCancelEdit>,
-      required: true
-    }
   },
 
   setup(props) {
+    const state = reactive<State>({
+      todoIdBeingEdited: null,
+    });
     const isTodoBeingEdited = (todo: Todo) =>
-      todo.id === props.todoIdBeingEdited;
-    return { isTodoBeingEdited };
-  }
+      todo.id === state.todoIdBeingEdited;
+
+    const handleSubmitEditedTodoAndReset: HandleSubmitEditedTodoAndReset = (
+      editedTodo
+    ) => {
+      props.handleSubmitEditedTodo(editedTodo);
+      state.todoIdBeingEdited = null;
+    };
+    const handleClickEdit: HandleClickEdit = (todo) => {
+      state.todoIdBeingEdited = todo.id;
+    };
+    const handleCancelEdit: HandleCancelEdit = () => {
+      state.todoIdBeingEdited = null;
+    };
+
+    return {
+      isTodoBeingEdited,
+      handleSubmitEditedTodoAndReset,
+      handleClickEdit,
+      handleCancelEdit,
+    };
+  },
 });
 </script>
