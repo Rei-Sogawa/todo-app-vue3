@@ -21,11 +21,11 @@ import TodoList from "@/components/TodoList.vue";
 import useTodos from "@/composables/use-todos";
 
 import type { HandleSubmitNewTodo } from "@/components/CreateTodoForm.vue";
-import type { HandleSubmitEditedTodo } from "@/components/TodoList.vue";
 import type {
+  HandleSubmitEditedTodo,
   HandleToggleCompleted,
   HandleClickRemove,
-} from "@/components/TodoItem.vue";
+} from "@/components/TodoList.vue";
 
 type State = {
   newTodoTitle: string;
@@ -49,9 +49,8 @@ export default defineComponent({
       const { id, title, completed } = todo;
       updateTodo({ id, title, completed: !completed });
     };
-    const handleClickRemove: HandleClickRemove = (todo) => {
-      const { id } = todo;
-      removeTodo({ id });
+    const handleClickRemove: HandleClickRemove = (todoId) => {
+      removeTodo({ id: todoId });
     };
     const handleSubmitEditedTodo: HandleSubmitEditedTodo = (editedTodo) => {
       const { id, title, completed } = editedTodo;

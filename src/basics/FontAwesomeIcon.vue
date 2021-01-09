@@ -1,7 +1,7 @@
 <template>
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    :class="$props.class"
+    :class="className"
     :viewBox="`0 0 ${width} ${height}`"
   >
     <path fill="currentColor" :d="svgPath" />
@@ -27,7 +27,7 @@ export default defineComponent({
       type: String as PropType<"fas" | "fal" | "far">,
       default: "fas"
     },
-    class: String
+    className: String
   },
 
   setup(props) {

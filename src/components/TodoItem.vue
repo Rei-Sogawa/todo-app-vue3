@@ -11,11 +11,11 @@
       <span>{{ todo.title }}</span>
     </div>
     <div class="my-n2">
-      <button class="btn px-1 mr-1" @click="handleClickEdit(todo)">
-        <fa icon="edit" class="edit-icon"></fa>
+      <button class="btn px-1 mr-1" @click="handleClickEdit(todo.id)">
+        <FontAwesomeIcon icon="edit" className="edit-icon" />
       </button>
-      <button class="btn px-1" @click="handleClickRemove(todo)">
-        <fa icon="trash" class="trash-icon"></fa>
+      <button class="btn px-1" @click="handleClickRemove(todo.id)">
+        <FontAwesomeIcon icon="trash" className="trash-icon" />
       </button>
     </div>
   </li>
@@ -27,11 +27,11 @@ import { FontAwesomeIcon } from "@/plugins/font-awesome";
 import Todo from "@/models/todo";
 
 export type HandleToggleCompleted = (todo: Todo) => void;
-export type HandleClickEdit = (todo: Todo) => void;
-export type HandleClickRemove = (todo: Todo) => void;
+export type HandleClickEdit = (todoId: string) => void;
+export type HandleClickRemove = (todoId: string) => void;
 
 export default defineComponent({
-  components: { fa: FontAwesomeIcon },
+  components: { FontAwesomeIcon },
 
   props: {
     todo: {

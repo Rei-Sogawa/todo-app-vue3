@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, Ref, ref, onMounted } from "vue";
+import { defineComponent, PropType, ref, onMounted } from "vue";
 import type Todo from "@/models/todo";
 
 export type HandleCancelEdit = () => void;
@@ -36,7 +36,7 @@ export default defineComponent({
 
   setup(props) {
     const todoBeingEdited: Todo = { ...props.todo };
-    const input: Ref<HTMLInputElement | null> = ref(null);
+    const input = ref<HTMLInputElement | null>(null);
     onMounted(() => {
       input.value?.focus();
     });

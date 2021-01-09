@@ -6,6 +6,7 @@
       required
       class="form-control px-5 py-4"
       v-model.trim="state.title"
+      @change="$emit('update:newTodoTitle', $event.target.value)"
     />
   </form>
 </template>
@@ -33,18 +34,12 @@ export default defineComponent({
 
   emits: ["update:newTodoTitle"],
 
-  setup(props, context) {
+  setup(props) {
     const state = reactive<State>({ title: props.newTodoTitle });
     watch(
       () => props.newTodoTitle,
       newValue => {
         state.title = newValue;
-      }
-    );
-    watch(
-      () => state.title,
-      newValue => {
-        context.emit("update:newTodoTitle", newValue);
       }
     );
     return { state };

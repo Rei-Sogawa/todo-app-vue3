@@ -35,9 +35,10 @@ import type {
 } from "@/components/EditTodoForm.vue";
 
 export type HandleSubmitEditedTodo = (editedTodo: Todo) => void;
+export type { HandleToggleCompleted, HandleClickRemove }
 
 type State = {
-  todoIdBeingEdited: string | null;
+  todoIdBeingEdited?: string;
 };
 
 export default defineComponent({
@@ -64,7 +65,7 @@ export default defineComponent({
 
   setup(props) {
     const state = reactive<State>({
-      todoIdBeingEdited: null,
+      todoIdBeingEdited: undefined,
     });
     const isTodoBeingEdited = (todo: Todo) =>
       todo.id === state.todoIdBeingEdited;
@@ -73,16 +74,17 @@ export default defineComponent({
       editedTodo
     ) => {
       props.handleSubmitEditedTodo(editedTodo);
-      state.todoIdBeingEdited = null;
+      state.todoIdBeingEdited = undefined;
     };
-    const handleClickEdit: HandleClickEdit = (todo) => {
-      state.todoIdBeingEdited = todo.id;
+    const handleClickEdit: HandleClickEdit = (todoId) => {
+      state.todoIdBeingEdited = todoId;
     };
     const handleCancelEdit: HandleCancelEdit = () => {
-      state.todoIdBeingEdited = null;
+      state.todoIdBeingEdited = undefined;
     };
 
     return {
+      state,
       isTodoBeingEdited,
       handleSubmitEditedTodoAndReset,
       handleClickEdit,
